@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Portfolio</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        #videoContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .video-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>TikTok Portfolio</h1>
+    <p>Live TikTok Stats</p>
+    
+    <div id="videoContainer"></div>
+
+    <script>
+        const socket = io("https://your-backend.onrender.com"); // Replace with your backend URL
+
+        function updateTikTokData(videos) {
+            const container = document.getElementById("videoContainer");
+            container.innerHTML = ""; // Clear existing content
+
+            videos.forEach(video => {
+                const videoCard = document.createElement("div");
+                videoCard.classList.add("video-card");
+                videoCard.innerHTML = `
+                    <h3>${video.title}</h3>
+                    <p><strong>${video.views}</strong> Views</p>
+                `;
+                container.appendChild(videoCard);
+            });
+        }
+
+        socket.on("updateData", (videos) => {
+            updateTikTokData(videos);
+        });
+
+        // Fetch initial data
+        fetch("https://your-backend.onrender.com/api/tiktok")
+            .then(response => response.json())
+            .then(data => updateTikTokData(data))
+            .catch(error => console.error("Error fetching data:", error));
+    </script>
+
+</body>
+</html>
